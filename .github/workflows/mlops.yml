@@ -139,7 +139,15 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
+          port: 22 
+          known_hosts: '*' 
+          strict_host_key_checking: false
           script: |
             sudo systemctl restart mlops-serve
-            sleep 5
-            curl -sf http://localhost:8000/health && echo "Health check passed." || exit 1
+            for i in $(seq 1 10); do
+              curl -sf http://localhost:8000/health && { echo "Health check passed."; exit 0; }
+              echo "Waiting for mlops-serve... ($i/10)"
+              sleep 5
+            done
+            echo "Health check failed after 50 seconds." >&2
+            exit 1

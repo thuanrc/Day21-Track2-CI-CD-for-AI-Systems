@@ -60,7 +60,15 @@ jobs:
         run: |
           echo '${{ secrets.CLOUD_CREDENTIALS }}' > /tmp/sa-key.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa-key.json" >> $GITHUB_ENV
-
+      - name: Debug credentials
+        run: |
+          if [ -f /tmp/sa-key.json ]; then
+            echo "✓ Credentials file exists"
+            head -c 100 /tmp/sa-key.json
+          else
+            echo "✗ Credentials file missing"
+          fi  
+          
       - name: Pull data with DVC
         run: dvc pull data/train_phase1.csv.dvc data/eval.csv.dvc
 

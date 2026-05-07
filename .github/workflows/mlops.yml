@@ -2,7 +2,7 @@ name: MLOps Pipeline
 
 on:
   push:
-    branches: [master]
+    branches: ["master"]
     paths:
       - 'data/**.dvc'
       - 'src/**.py'
@@ -58,7 +58,9 @@ jobs:
 
       - name: Authenticate to Cloud Storage
         run: |
-          echo '${{ secrets.CLOUD_CREDENTIALS }}' | base64 -d > /tmp/sa-key.json
+          cat > /tmp/sa-key.json <<EOF
+          ${{ secrets.CLOUD_CREDENTIALS }}
+          EOF
           echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa-key.json" >> $GITHUB_ENV
           
       - name: Pull data with DVC
